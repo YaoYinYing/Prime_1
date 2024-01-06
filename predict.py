@@ -37,7 +37,9 @@ def main():
             fuzzy=True,
         )
 
-    os.makedirs(os.path.dirname(args.save), exist_ok=True)
+    save_dir=os.path.dirname(os.path.abspath(args.save))
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
     
 
     sequence = read_seq(args.fasta)
