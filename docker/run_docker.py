@@ -60,8 +60,6 @@ def main(argv):
         command_args.append(f"--mutant={input_target_mutant_path}")
 
     save = pathlib.Path(FLAGS.save).resolve()
-
-    os.makedirs(save, exist_ok=True)
     output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output")
     mounts.append(types.Mount(output_target_path, str(save), type="bind"))
     command_args.append(f"--save={output_target_path}")
