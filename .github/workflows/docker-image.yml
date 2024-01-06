@@ -1,0 +1,72 @@
+name: PRIME Docker Workflow
+
+on:
+  push:
+    paths:
+      - 'docker/**' # Monitor the entire 'docker' directory
+      - 'prime/**' # Monitor the entire 'scripts' directory
+      - 'predict.py'
+      - '.github/workflows/docker-image.yml' # monitor the main workflow script. enable it again if in necessary maintainances.
+      - '.biolib/config.yml'  # Monitor the Biolib config file
+
+    branches:
+      - main
+    
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set environment variable with current date
+      run: |
+        echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        echo "DATE: ${{ env.DATE }}"
+    
+    - name: Set environment variable with current repo dir
+      run: |
+        echo "REPO=$PWD" >> $GITHUB_ENV
+        echo "REPO: ${{ env.REPO }}"
+      
+    - name: Build Docker image
+      run: docker build -f docker/Dockerfile -t prime-lianglab .
+
+    - name: Tag Docker image with date and latest
+      run: |
+        docker tag prime-lianglab yaoyinying/prime-lianglab:${{ env.DATE }}
+        docker tag prime-lianglab yaoyinying/prime-lianglab:latest
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_GITHUB_REPO_SECRET }}" | docker login -u yaoyinying --password-stdin
+
+    - name: Testing
+      run: |
+        python -m venv prime-lianglab_test
+        source prime-lianglab_test/bin/activate
+        pip install -r docker/requirements.txt
+        python ${{ env.REPO }}/docker/run_docker.py --fasta ./tm_data/fasta/O25949-7.2.fasta --mutant ./tm_data/mutant/O25949-7.2.csv --save_dir O25949-7.2.prime_base.csv
+        cat O25949-7.2.prime_base.csv
+        deactivate 
+        
+    - name: Push Docker image
+      run: |
+        cd ${{ env.REPO }}
+        docker push yaoyinying/prime-lianglab:${{ env.DATE }}
+        docker push yaoyinying/prime-lianglab:latest
+
+    - name: Refresh Docker Hub Description
+      uses: peter-evans/dockerhub-description@v3
+      with:
+        username: yaoyinying
+        password: ${{ secrets.DOCKER_GITHUB_REPO_SECRET }}
+        repository: yaoyinying/prime-lianglab
+        readme-filepath: ./README.md
+        enable-url-completion: true
+
+    - name: Install pybiolib package
+      run: pip3 install -U pybiolib
+      
+    - name: Build and push biolib application
+      run: BIOLIB_TOKEN=${{ secrets.BIOLIB_TOKEN }}  biolib push YaoYinYing/prime_lianglab
