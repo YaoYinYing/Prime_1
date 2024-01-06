@@ -5,9 +5,10 @@ on:
     paths:
       - 'docker/**' # Monitor the entire 'docker' directory
       - 'prime/**' # Monitor the entire 'scripts' directory
-      - 'predict.py'
+      - 'predict.py' # Monitor the inference script
       - '.github/workflows/docker-image.yml' # monitor the main workflow script. enable it again if in necessary maintainances.
       - '.biolib/config.yml'  # Monitor the Biolib config file
+      - 'requirements.txt' # Monitor the requirements file
 
     branches:
       - main
