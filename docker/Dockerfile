@@ -11,11 +11,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -qy  \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pip packages.
+RUN pip install -r requirements.txt
 RUN pip3 install --no-cache-dir --upgrade pip \
     && pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
     
 COPY . /app/prime
-RUN pip3 install --no-cache-dir  -r /app/prime/requirements.txt 
+RUN pip install -r /app/prime/requirements.txt 
 
 
 # Add SETUID bit to the ldconfig binary so that non-root users can run it.
