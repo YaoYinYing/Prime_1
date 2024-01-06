@@ -18,6 +18,9 @@ COPY . /app/prime
 RUN pip3 install --no-cache-dir  -r /app/prime/requirements.txt 
 
 
+RUN mkdir -p /app/prime/checkpoints/ \
+    && python3 -c "import gdown; gdown.download('https://drive.google.com/file/d/15ciPzoc8Am3xLrL23SlnxbYfn39CJ7F_/view?usp=sharing', '/app/prime/checkpoints/prime_base.pt', quiet=False, fuzzy=True)"
+
 # Add SETUID bit to the ldconfig binary so that non-root users can run it.
 RUN chmod u+s /sbin/ldconfig.real
 

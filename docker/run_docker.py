@@ -11,12 +11,9 @@ from absl import app
 from absl import flags
 from docker import types
 from typing import Tuple
-import gdown
-DEFAULT_WEIGHTS_URL = 'https://drive.google.com/file/d/15ciPzoc8Am3xLrL23SlnxbYfn39CJ7F_/view?usp=sharing'
 
 flags.DEFINE_string("fasta", None, "Path to a specific FASTA filename.")
 flags.DEFINE_string("mutant", None, "Path to a specific mutant filename")
-flags.DEFINE_string("checkpoint", './checkpoints/prime_base.pt', "Path to a specific mutant filename")
 flags.DEFINE_string("save", "./prime_predictions", "Saving directory path.")
 
 flags.DEFINE_string(
@@ -59,23 +56,6 @@ def main(argv):
         input_target_mutant_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "mutant", os.path.basename(mutant))
         mounts.append(types.Mount(input_target_mutant_path, str(mutant), type="bind"))
         command_args.append(f"--mutant={input_target_mutant_path}")
-
-    checkpoint = pathlib.Path(FLAGS.checkpoint).resolve()
-
-    os.makedirs(os.path.dirname(checkpoint), exist_ok=True)
-
-    if not os.path.exists(checkpoint):
-        print('fetching checkpoint ...')
-        gdown.download(
-            url=DEFAULT_WEIGHTS_URL,
-            output=checkpoint,
-            quiet=False,
-            fuzzy=True,
-        )
-    
-    checkpoint_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "checkpoint", os.path.basename(checkpoint))
-    mounts.append(types.Mount(checkpoint_target_path, str(checkpoint), type="bind"))
-    command_args.append(f"--checkpoint={checkpoint_target_path}")
 
     save = pathlib.Path(FLAGS.save).resolve()
 
