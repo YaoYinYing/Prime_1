@@ -72,6 +72,8 @@ def main(argv):
     os.makedirs(os.path.dirname(save), exist_ok=True)
     output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output")
     mounts.append(types.Mount(output_target_path, str(save), type="bind"))
+    save = pathlib.Path(FLAGS.save).resolve()
+
     command_args.append(f"--save={output_target_path}")
 
 
