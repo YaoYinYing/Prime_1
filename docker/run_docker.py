@@ -64,7 +64,7 @@ def main(argv):
     os.makedirs(save, exist_ok=True)
     output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output")
     mounts.append(types.Mount(output_target_path, str(save), type="bind"))
-    command_args.append(f"--save={output_target_path}")
+    command_args.append(f"--save={output_target_path}/O25949-7.2.prime_base.csv")
 
 
 
