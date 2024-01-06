@@ -2,7 +2,7 @@ biolib_version: 2
 modules:
     main:
         image: 'dockerhub://yaoyinying/prime-lianglab:latest'
-        command:  --save /home/biolib/prime_lianglab/save_dir/predicted_prime_base.csv
+        command:  --save /home/biolib/prime_lianglab/save_dir/predicted_prime_base.csv --checkpoint  /home/biolib/prime_lianglab/checkpoints/prime_base.pt
         working_directory: /home/biolib/
         input_files:
             - COPY / /home/biolib/
