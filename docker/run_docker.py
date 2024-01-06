@@ -64,13 +64,13 @@ def main(argv):
 
     os.makedirs(os.path.dirname(checkpoint), exist_ok=True)
     checkpoint_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "checkpoint", os.path.basename(checkpoint))
-    mounts.append(types.Mount(checkpoint_target_path, str(save), type="bind"))
+    mounts.append(types.Mount(checkpoint_target_path, str(checkpoint), type="bind"))
     command_args.append(f"--checkpoint={checkpoint_target_path}")
 
     save = pathlib.Path(FLAGS.save).resolve()
 
     os.makedirs(os.path.dirname(save), exist_ok=True)
-    output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output")
+    output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output",os.path.basename(save))
     mounts.append(types.Mount(output_target_path, str(save), type="bind"))
     command_args.append(f"--save={output_target_path}")
 
