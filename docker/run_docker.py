@@ -14,6 +14,7 @@ from typing import Tuple
 
 flags.DEFINE_string("fasta", None, "Path to a specific FASTA filename.")
 flags.DEFINE_string("mutant", None, "Path to a specific mutant filename")
+flags.DEFINE_string("checkpoint", './checkpoints/prime_base.pt', "Path to a specific mutant filename")
 flags.DEFINE_string("save", "./prime_predictions", "Saving directory path.")
 
 
@@ -49,19 +50,26 @@ def main(argv):
 
     if FLAGS.fasta:
         fasta = pathlib.Path(FLAGS.fasta).resolve()
-        input_target_fasta_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "input", os.path.basename(fasta))
+        input_target_fasta_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "fasta", os.path.basename(fasta))
         mounts.append(types.Mount(input_target_fasta_path, str(fasta), type="bind"))
         command_args.append(f"--fasta={input_target_fasta_path}")
     
     if FLAGS.mutant:
         mutant = pathlib.Path(FLAGS.mutant).resolve()
-        input_target_mutant_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "input", os.path.basename(mutant))
+        input_target_mutant_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "mutant", os.path.basename(mutant))
         mounts.append(types.Mount(input_target_mutant_path, str(mutant), type="bind"))
         command_args.append(f"--mutant={input_target_mutant_path}")
 
+    checkpoint = pathlib.Path(FLAGS.checkpoint).resolve()
+
+    os.makedirs(os.path.dirname(checkpoint), exist_ok=True)
+    checkpoint_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "checkpoint", os.path.basename(checkpoint))
+    mounts.append(types.Mount(checkpoint_target_path, str(save), type="bind"))
+    command_args.append(f"--checkpoint={checkpoint_target_path}")
+
     save = pathlib.Path(FLAGS.save).resolve()
 
-    os.makedirs(save, exist_ok=True)
+    os.makedirs(os.path.dirname(save), exist_ok=True)
     output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output")
     mounts.append(types.Mount(output_target_path, str(save), type="bind"))
     command_args.append(f"--save={output_target_path}")

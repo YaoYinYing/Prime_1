@@ -12,7 +12,7 @@ from prime.model import Config, ForMaskedLM
 import gdown
 
 script_path = os.path.dirname(os.path.realpath(__file__))
-weight_path = os.path.join(script_path, 'checkpoints/prime_base.pt')
+weight_path = os.path.join(script_path, 'checkpoints','prime_base.pt')
 
 
 DEFAULT_WEIGHTS_URL = 'https://drive.google.com/file/d/15ciPzoc8Am3xLrL23SlnxbYfn39CJ7F_/view?usp=sharing'
@@ -24,15 +24,16 @@ def main():
     psr.add_argument("-f", "--fasta", type=str, required=True)
     psr.add_argument("-m", "--mutant", type=str, required=True)
     psr.add_argument("-s", "--save", type=str, required=True)
+    psr.add_argument("-c", "--checkpoint", type=str, default=weight_path)
     args = psr.parse_args()
 
-    os.makedirs(os.path.dirname(weight_path), exist_ok=True)
+    os.makedirs(os.path.dirname(args.checkpoint), exist_ok=True)
 
-    if not os.path.exists(weight_path):
+    if not os.path.exists(args.checkpoint):
         print('fetching checkpoint ...')
         gdown.download(
             url=DEFAULT_WEIGHTS_URL,
-            output=weight_path,
+            output=args.checkpoint,
             quiet=False,
             fuzzy=True,
         )
