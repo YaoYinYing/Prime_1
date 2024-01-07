@@ -42,13 +42,13 @@ def _create_mount(mount_name: str, path: str, read_only=True) -> Tuple[types.Mou
     path = os.path.abspath(path)
     target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, mount_name)
 
-    if path.is_dir():
+    if os.path.isdir(path):
         source_path = path
         mounted_path = target_path
     else:
         source_path = os.path.dirname(path)
         mounted_path = os.path.join(target_path, os.path.basename(path))
-    if not source_path.exists():
+    if not os.path.exists(source_path):
         os.makedirs(source_path)
     print('Mounting %s -> %s', source_path, target_path)
     mount = types.Mount(target=str(target_path), source=str(source_path),
