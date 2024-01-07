@@ -79,7 +79,7 @@ def main(argv):
     os.makedirs(os.path.dirname(save), exist_ok=True)
     mount_save,mounted_save=_create_mount(mount_name='save',path=save,read_only=False)
     mounts.append(mount_save)
-    command_args.append(f"--save_dir={mounted_save}")
+    command_args.append(f"--save={mounted_save}")
 
     checkpoint = os.path.abspath(FLAGS.checkpoint)
 
