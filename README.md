@@ -3,7 +3,7 @@
 
 Updated on 2023.10.20
 
-
+![logo](band.png)
 ## Introduction
 
 This repository provides the official implementation of Prime (Protein language model for Intelligent Masked pretraining and Environment (temperature) prediction).
@@ -20,7 +20,7 @@ Key feature:
 
 ### What is Prime?
 Prime, a novel protein language model, has been developed for predicting the Optimal Growth Temperature (OGT) and enabling zero-shot prediction of protein thermostability and activity. This novel approach leverages temperature-guided language modeling.
-![logo](./model.png)
+![logo](model.png)
 
 
 ## Use of PRIME
