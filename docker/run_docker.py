@@ -17,7 +17,7 @@ flags.DEFINE_string("save", "./prime_predictions/test.csv", "Saving csv path.")
 flags.DEFINE_string("checkpoint", './checkpoints/prime_base.pt', "Path to a specific mutant filename")
 
 flags.DEFINE_string(
-    "docker_image_name", "prime-lianglab", "Name of the Pythia Docker image."
+    "docker_image_name", "yaoyinying/prime-lianglab", "Name of the Pythia Docker image."
 )
 
 flags.DEFINE_string(
@@ -90,6 +90,8 @@ def main(argv):
 
     print(command_args)
 
+    proxies= {k: os.environ[k] for k in dict(os.environ).keys() if 'PROXY' in k.upper()}
+
     client = docker.from_env()
     network=client.networks.create("network1", driver="bridge")
 
@@ -100,6 +102,7 @@ def main(argv):
         detach=True,
         mounts=mounts,
         user=FLAGS.docker_user,
+        environment=proxies
     )
     network.connect(container)
 
