@@ -28,7 +28,7 @@ arguments:
 
 remote_hosts:
     - drive.google.com
-    - *.googleusercontent.com
+    - doc-0c-9s-docs.googleusercontent.com
     
 
 description_file: README.md
