@@ -36,6 +36,7 @@ def main():
             output=args.checkpoint,
             quiet=False,
             fuzzy=True,
+            use_cookies=False
         )
 
     save_dir=os.path.dirname(os.path.abspath(args.save))
