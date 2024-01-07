@@ -23,7 +23,7 @@ def main():
     psr = ArgumentParser()
     psr.add_argument("-f", "--fasta", type=str, required=True)
     psr.add_argument("-m", "--mutant", type=str, required=True)
-    psr.add_argument("-s", "--save_dir", type=str, required=True)
+    psr.add_argument("-s", "--save", type=str, required=True)
     psr.add_argument("-c", "--checkpoint", type=str, default=weight_path)
     args = psr.parse_args()
 
@@ -38,10 +38,9 @@ def main():
             fuzzy=True,
         )
 
-    save_dir=os.path.abspath(args.save_dir)
+    save_dir=os.path.dirname(os.path.abspath(args.save))
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    
 
     sequence = read_seq(args.fasta)
     df = pd.read_csv(args.mutant)
@@ -66,7 +65,7 @@ def main():
         )
         scores.append(score)
     df["predict_score"] = scores
-    df.to_csv(os.path.join(args.save_dir, f'{os.path.basename(args.fasta).replace(".fasta","")}_{os.path.basename(args.mutant).replace(".csv","")}'), index=False)
+    df.to_csv(args.save, index=False)
 
 
 if __name__ == "__main__":
