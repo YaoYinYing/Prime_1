@@ -1,0 +1,37 @@
+biolib_version: 2
+modules:
+    main:
+        image: 'dockerhub://yaoyinying/prime-lianglab:latest'
+        command:  --save /home/biolib/prime_lianglab/save_dir/predicted_prime_base.csv
+        working_directory: /home/biolib/
+        input_files:
+            - COPY / /home/biolib/
+        output_files:
+            - COPY /home/biolib/prime_lianglab/save_dir/ /
+        source_files: []
+
+arguments:
+    -
+        default_value: /input.fasta
+        description: 'Upload your sequence in FASTA format: '
+        key: '--fasta'
+        key_value_separator: '='
+        required: true
+        type: file
+    -
+        default_value: /input.csv
+        description: 'Upload your mutant in CSV format: '
+        key: '--mutant'
+        key_value_separator: '='
+        required: true
+        type: file
+
+remote_hosts:
+    - drive.google.com
+    
+
+description_file: README.md
+
+
+
+

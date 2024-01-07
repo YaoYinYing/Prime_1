@@ -1,15 +1,7 @@
 # [Model] Prime
 
-<!-- Insert the project banner here -->
-<div align="center">
-    <a href="https://github.com/ai4protein/Prime/"><img width="200px" height="auto" src="https://github.com/ai4protein/Prime/blob/main/band.png"></a>
-</div>
-
-<!-- Select some of the point info, feel free to delete -->
-[![GitHub license](https://img.shields.io/github/license/ai4protein/Prime)](https://github.com/ai4protein/Prime/blob/main/LICENSE)
 
 Updated on 2023.10.20
-
 
 
 ## Introduction
@@ -28,9 +20,7 @@ Key feature:
 
 ### What is Prime?
 Prime, a novel protein language model, has been developed for predicting the Optimal Growth Temperature (OGT) and enabling zero-shot prediction of protein thermostability and activity. This novel approach leverages temperature-guided language modeling.
-<div align="center">
-    <a href="https://"><img width="1000px" height="auto" src="https://github.com/ai4protein/Prime/blob/main/model.png"></a>
-</div>
+![logo](./model.png)
 
 
 ## Use of PRIME

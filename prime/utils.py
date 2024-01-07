@@ -1,5 +1,8 @@
+import os
 from Bio import SeqIO
+import torch
 
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 def read_seq(fasta_file):
     for record in SeqIO.parse(fasta_file, "fasta"):
@@ -133,3 +136,16 @@ def score_mutant(mutant, sequence, logits, vocab, offset):
     score = logits[1 + idx, mt_encoded] - logits[1 + idx, wt_encoded]
     score = score.item()
     return score
+
+def device_picker(device: str = '') -> torch.device:
+    if (not device or device.startswith('cuda')) and torch.cuda.is_available():
+        print('Use CUDA')
+        device = torch.device('cuda')
+    elif (not device or device.startswith('mps')) and torch.backends.mps.is_available() and torch.backends.mps.is_built():
+        print('Use MPS')
+        device = torch.device("mps")
+    else:
+        print('Use CPU')
+        device = torch.device("cpu")
+    
+    return device
