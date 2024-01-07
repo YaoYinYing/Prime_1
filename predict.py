@@ -48,7 +48,7 @@ def main():
 
     device = device_picker()
     model = ForMaskedLM(Config())
-    model.load_state_dict(torch.load(weight_path))
+    model.load_state_dict(torch.load(args.checkpoint))
     model.eval()
     model = model.to(device)
 
