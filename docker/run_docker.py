@@ -60,9 +60,9 @@ def main(argv):
     save = pathlib.Path(FLAGS.save).resolve()
 
     os.makedirs(os.path.dirname(save), exist_ok=True)
-    output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output",os.path.basename(save))
+    output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output",)
     mounts.append(types.Mount(output_target_path, str(save), type="bind"))
-    command_args.append(f"--save={output_target_path}")
+    command_args.append(f"--save={os.path.join(output_target_path,os.path.basename(save))}")
 
 
     print(command_args)

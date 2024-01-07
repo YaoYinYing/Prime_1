@@ -48,7 +48,7 @@ jobs:
         source prime-lianglab_test/bin/activate
         pip install -r docker/requirements.txt
         python ${{ env.REPO }}/docker/run_docker.py --fasta ./tm_data/fasta/O25949-7.2.fasta --mutant ./tm_data/mutant/O25949-7.2.csv --save ./O25949-7.2.prime_base.csv
-        cat O25949-7.2.prime_base.csv
+        cat ./O25949-7.2.prime_base.csv
         deactivate 
         
     - name: Push Docker image
