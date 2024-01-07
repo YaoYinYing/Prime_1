@@ -100,8 +100,8 @@ def main(argv):
         detach=True,
         mounts=mounts,
         user=FLAGS.docker_user,
-        network=network
     )
+    network.connect(container)
 
     # Add signal handler to ensure CTRL+C also stops the running container.
     signal.signal(signal.SIGINT, lambda unused_sig, unused_frame: container.kill())
