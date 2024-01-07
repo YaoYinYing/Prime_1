@@ -26,6 +26,8 @@ arguments:
         required: true
         type: file
 
+remote_hosts:
+    - drive.google.com
     
 
 description_file: README.md

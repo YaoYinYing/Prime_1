@@ -14,7 +14,8 @@ from typing import Tuple
 
 flags.DEFINE_string("fasta", None, "Path to a specific FASTA filename.")
 flags.DEFINE_string("mutant", None, "Path to a specific mutant filename")
-flags.DEFINE_string("save", "./prime_predictions", "Saving directory path.")
+flags.DEFINE_string("save_dir", "./prime_predictions", "Saving directory path.")
+flags.DEFINE_string("checkpoint", './checkpoints/prime_base.pt', "Path to a specific mutant filename")
 
 flags.DEFINE_string(
     "docker_image_name", "prime-lianglab", "Name of the Pythia Docker image."
@@ -37,6 +38,23 @@ except:
     _ROOT_MOUNT_DIRECTORY = pathlib.Path("/tmp/").resolve()
     os.makedirs(_ROOT_MOUNT_DIRECTORY, exist_ok=True)
 
+def _create_mount(mount_name: str, path: str, read_only=True) -> Tuple[types.Mount, str]:
+    """Create a mount point for each file and directory used by the model."""
+    path = pathlib.Path(path).absolute()
+    target_path = pathlib.Path(_ROOT_MOUNT_DIRECTORY, mount_name)
+
+    if path.is_dir():
+        source_path = path
+        mounted_path = target_path
+    else:
+        source_path = path.parent
+        mounted_path = pathlib.Path(target_path, path.name)
+    if not source_path.exists():
+        os.makedirs(source_path)
+    print('Mounting %s -> %s', source_path, target_path)
+    mount = types.Mount(target=str(target_path), source=str(source_path),
+                        type='bind', read_only=read_only)
+    return mount, str(mounted_path)
 
 def main(argv):
     if len(argv) > 1:
@@ -47,27 +65,34 @@ def main(argv):
 
     if FLAGS.fasta:
         fasta = pathlib.Path(FLAGS.fasta).resolve()
-        input_target_fasta_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "fasta", os.path.basename(fasta))
-        mounts.append(types.Mount(input_target_fasta_path, str(fasta), type="bind"))
-        command_args.append(f"--fasta={input_target_fasta_path}")
+        mount_fasta, mounted_fasta=_create_mount(mount_name='fasta', path=fasta,read_only=True)
+        mounts.append(mount_fasta)
+        command_args.append(f"--fasta={mounted_fasta}")
     
     if FLAGS.mutant:
         mutant = pathlib.Path(FLAGS.mutant).resolve()
-        input_target_mutant_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "mutant", os.path.basename(mutant))
-        mounts.append(types.Mount(input_target_mutant_path, str(mutant), type="bind"))
-        command_args.append(f"--mutant={input_target_mutant_path}")
+        mount_mutant,mounted_mutant=_create_mount(mount_name='mutant', path=mutant, read_only=True)
+        mounts.append(mount_mutant)
+        command_args.append(f"--mutant={mounted_mutant}")
 
-    save = pathlib.Path(FLAGS.save).resolve()
+    save_dir = pathlib.Path(FLAGS.save_dir).resolve()
 
-    os.makedirs(os.path.dirname(save), exist_ok=True)
-    output_target_path = os.path.join(_ROOT_MOUNT_DIRECTORY, "output",)
-    mounts.append(types.Mount(output_target_path, str(save), type="bind"))
-    command_args.append(f"--save={os.path.join(output_target_path,os.path.basename(save))}")
+    os.makedirs(save_dir, exist_ok=True)
+    mount_save_dir,mounted_save_dir=_create_mount(mount_name='save_dir',path=save_dir,read_only=False)
+    mounts.append(mount_save_dir)
+    command_args.append(f"--save_dir={mounted_save_dir}")
 
+    checkpoint = pathlib.Path(FLAGS.checkpoint).resolve()
+    
+    mount_checkpoint, mounted_checkpoint=_create_mount(mount_name='checkpoint', path=checkpoint, read_only=False)
+    os.makedirs(save_dir, exist_ok=True)
+    mounts.append(mount_checkpoint)
+    command_args.append(f"--save={mounted_checkpoint}")
 
     print(command_args)
 
     client = docker.from_env()
+    network=client.networks.create("network1", driver="bridge")
 
     container = client.containers.run(
         image=FLAGS.docker_image_name,
@@ -76,6 +101,7 @@ def main(argv):
         detach=True,
         mounts=mounts,
         user=FLAGS.docker_user,
+        network=network
     )
 
     # Add signal handler to ensure CTRL+C also stops the running container.
