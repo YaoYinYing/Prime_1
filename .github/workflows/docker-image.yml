@@ -26,48 +26,43 @@ jobs:
         echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
         echo "DATE: ${{ env.DATE }}"
     
-    - name: Set environment variable with current repo dir
-      run: |
-        echo "REPO=$PWD" >> $GITHUB_ENV
-        echo "REPO: ${{ env.REPO }}"
-      
     - name: Build Docker image
-      run: docker build -f docker/Dockerfile -t prime-lianglab .
+      run: docker build -f docker/Dockerfile -t prime-honglab .
 
     - name: Tag Docker image with date and latest
       run: |
-        docker tag prime-lianglab yaoyinying/prime-lianglab:${{ env.DATE }}
-        docker tag prime-lianglab yaoyinying/prime-lianglab:latest
+        docker tag prime-honglab yaoyinying/prime-honglab:${{ env.DATE }}
+        docker tag prime-honglab yaoyinying/prime-honglab:latest
 
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_GITHUB_REPO_SECRET }}" | docker login -u yaoyinying --password-stdin
 
     - name: Testing
       run: |
-        python -m venv prime-lianglab_test
-        source prime-lianglab_test/bin/activate
+        python -m venv prime-honglab_test
+        source prime-honglab_test/bin/activate
         pip install -r docker/requirements.txt
-        python ${{ env.REPO }}/docker/run_docker.py --fasta ./tm_data/fasta/O25949-7.2.fasta --mutant ./tm_data/mutant/O25949-7.2.csv --save ./O25949-7.2.prime_base.csv
+        python docker/run_docker.py --fasta ./tm_data/fasta/O25949-7.2.fasta --mutant ./tm_data/mutant/O25949-7.2.csv --save ./O25949-7.2.prime_base.csv
         cat ./O25949-7.2.prime_base.csv
         deactivate 
         
     - name: Push Docker image
       run: |
-        cd ${{ env.REPO }}
-        docker push yaoyinying/prime-lianglab:${{ env.DATE }}
-        docker push yaoyinying/prime-lianglab:latest
+        docker push yaoyinying/prime-honglab:${{ env.DATE }}
+        docker push yaoyinying/prime-honglab:latest
 
     - name: Refresh Docker Hub Description
       uses: peter-evans/dockerhub-description@v3
       with:
         username: yaoyinying
         password: ${{ secrets.DOCKER_GITHUB_REPO_SECRET }}
-        repository: yaoyinying/prime-lianglab
+        repository: yaoyinying/prime-honglab
         readme-filepath: ./README.md
         enable-url-completion: true
-
-    - name: Install pybiolib package
-      run: pip3 install -U pybiolib
+    
+    # biolib has OOM issue with Prime
+    # - name: Install pybiolib package
+    #   run: pip3 install -U pybiolib
       
-    - name: Build and push biolib application
-      run: BIOLIB_TOKEN=${{ secrets.BIOLIB_TOKEN }}  biolib push YaoYinYing/prime_lianglab
+    # - name: Build and push biolib application
+    #   run: BIOLIB_TOKEN=${{ secrets.BIOLIB_TOKEN }}  biolib push YaoYinYing/prime_honglab

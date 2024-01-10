@@ -1,0 +1,46 @@
+[build-system]
+requires = ["poetry-core>=1.0.0,<2.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "PRIME"
+version = "1.0.0"
+description = "PRIME Model (under review)."
+authors = ["Mingchen Li <ginnmelich@gmail.com>"]
+license = 'GPL-3.0'
+readme = "README.md"
+
+repository = "https://github.com/ai4protein/Prime"
+classifiers = [
+    "Topic :: Scientific/Engineering :: Biochemistry",
+    "Topic :: Scientific/Engineering :: Protein Engineering"
+]
+
+packages = [
+    { include = "prime" },
+]
+
+[tool.poetry.dependencies]
+
+python = ">=3.9"
+pandas = "*"
+biopython = ">=1.8.1"
+gdown = '*'
+
+numpy = "*"
+
+torch = { version = "^2.0.1", allow-prereleases = false}
+torchvision = { version = "*", allow-prereleases = false}
+torchaudio = { version = "*", allow-prereleases = false}
+
+
+[tool.black]
+line-length = 79
+target-version = ['py38']
+skip-string-normalization = true
+
+include = '''
+/(
+  | prime
+)/
+'''

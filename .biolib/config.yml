@@ -1,13 +1,13 @@
 biolib_version: 2
 modules:
     main:
-        image: 'dockerhub://yaoyinying/prime-lianglab:latest'
-        command:  --save /home/biolib/prime_lianglab/save_dir/predicted_prime_base.csv
+        image: 'dockerhub://yaoyinying/prime-honglab:latest'
+        command:  --save /home/biolib/prime_honglab/save_dir/predicted_prime_base.csv
         working_directory: /home/biolib/
         input_files:
             - COPY / /home/biolib/
         output_files:
-            - COPY /home/biolib/prime_lianglab/save_dir/ /
+            - COPY /home/biolib/prime_honglab/save_dir/ /
         source_files: []
 
 arguments:
